@@ -1,1 +1,8 @@
-console.log('Hello from Node.js!')
+const app = require('./app');
+const config = require('./utils/config.js');
+
+app.listen(config.PORT, () => {
+  console.log(
+    `Server running on port ${config.PORT} in ${config.NODE_ENV} mode.`
+  );
+});
