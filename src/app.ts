@@ -1,8 +1,10 @@
 import express from 'express';
-//@ts-ignore
 import mongoose from 'mongoose';
 import config from './utils/config';
 import logger from './utils/logger';
+import middleware from './middleware';
+
+import router from './cards/card.routes';
 
 const app = express();
 
@@ -14,5 +16,14 @@ mongoose
   .catch((error: Error) => {
     logger.error('Could not connect to MongoDB', error);
   });
+
+app.use(express.json());
+
+app.use(middleware.requestLogger);
+
+app.use('/cards', router);
+
+app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 export default app;
