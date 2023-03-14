@@ -1,4 +1,5 @@
 import express from 'express';
+//@ts-ignore
 import mongoose from 'mongoose';
 import config from './utils/config';
 import logger from './utils/logger';
@@ -10,7 +11,7 @@ mongoose
   .then(() => {
     logger.info('Connected to MongoDB');
   })
-  .catch((error) => {
+  .catch((error: Error) => {
     logger.error('Could not connect to MongoDB', error);
   });
 

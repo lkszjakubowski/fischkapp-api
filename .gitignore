@@ -105,5 +105,5 @@ dist
 # TernJS port file
 .tern-port
 
-.yarn/cache
+.yarn
 .pnp.cjs
