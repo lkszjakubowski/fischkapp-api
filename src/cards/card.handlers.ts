@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import CardWithId from '../interfaces/CardWithId';
 import { ParamsWithId } from '../interfaces/ParamsWithId';
 import { Card, TCard } from './card.model';
-import { ObjectId } from 'mongodb';
 import { UpdateCardPayload } from '../interfaces/UpdateCardPayload';
 
 export const createOne = async (
@@ -27,7 +26,7 @@ export const updateOne = async (
     const result = await Card.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    console.log(result);
+
     if (!result) {
       res.status(404).end();
     } else {
