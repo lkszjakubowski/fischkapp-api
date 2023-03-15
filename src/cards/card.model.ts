@@ -1,12 +1,14 @@
 import { z } from 'zod';
 import { Schema, model } from 'mongoose';
 
-export const TCard = z.object({
-  front: z.string().trim().min(1),
-  back: z.string().trim().min(1),
-  tags: z.array(z.string().trim().min(1)),
-  author: z.string().trim().min(1),
-});
+export const TCard = z
+  .object({
+    front: z.string().trim().min(1),
+    back: z.string().trim().min(1),
+    tags: z.array(z.string().trim().min(1)),
+    author: z.string().trim().min(1),
+  })
+  .strict();
 
 export type TCard = z.infer<typeof TCard>;
 

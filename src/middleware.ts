@@ -14,11 +14,11 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
 const validateRequest = (validators: RequestValidators) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (validators.body) {
-        req.body = await validators.body.parseAsync(req.body);
-      }
       if (validators.params) {
         req.params = await validators.params.parseAsync(req.params);
+      }
+      if (validators.body) {
+        req.body = await validators.body.parseAsync(req.body);
       }
       next();
     } catch (error) {
