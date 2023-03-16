@@ -1,8 +1,40 @@
 import { NextFunction, Request, Response } from 'express';
-import CardWithId from '../interfaces/CardWithId';
 import { ParamsWithId } from '../interfaces/ParamsWithId';
-import { Card, TCard } from './card.model';
-import { UpdateCardPayload } from '../interfaces/UpdateCardPayload';
+import { Card } from './card.model';
+import { TCard, UpdateCardPayload, CardWithId } from './card.interfaces';
+import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
+import { ParamsWithTag } from '../interfaces/ParamsWithTag';
+
+export const findAll = async (
+  _req: Request,
+  res: Response<CardWithId[]>,
+  _next: NextFunction
+) => {
+  const result = await Card.find().sort({ createdAt: -1 });
+  res.status(201).json(result);
+};
+
+export const findByAuthor = async (
+  req: Request<ParamsWithAuthor, CardWithId[], {}>,
+  res: Response<CardWithId[]>,
+  _next: NextFunction
+) => {
+  const result = await Card.find({ author: req.params.author }).sort({
+    createdAt: -1,
+  });
+  res.status(201).json(result);
+};
+
+export const findByTag = async (
+  req: Request<ParamsWithTag, CardWithId[], {}>,
+  res: Response<CardWithId[]>,
+  _next: NextFunction
+) => {
+  const result = await Card.find({ tags: req.params.tag }).sort({
+    createdAt: -1,
+  });
+  res.status(201).json(result);
+};
 
 export const createOne = async (
   req: Request<{}, CardWithId, TCard>,

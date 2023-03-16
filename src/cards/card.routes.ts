@@ -1,16 +1,30 @@
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
 import middleware from '../middleware';
-import { TCard } from './card.model';
-import { createOne, updateOne } from './card.handlers';
+import { TCard, UpdateCardPayload } from './card.interfaces';
+import {
+  createOne,
+  findAll,
+  findByAuthor,
+  findByTag,
+  updateOne,
+} from './card.handlers';
 import { ParamsWithId } from '../interfaces/ParamsWithId';
-import { UpdateCardPayload } from '../interfaces/UpdateCardPayload';
+import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
+import { ParamsWithTag } from '../interfaces/ParamsWithTag';
 
 const router = Router();
 
-router.get('/', (_req: Request, res: Response) => {
-  res.json({ success: true });
-});
-
+router.get('/', findAll);
+router.get(
+  '/author/:author',
+  middleware.validateRequest({ params: ParamsWithAuthor }),
+  findByAuthor
+);
+router.get(
+  '/tags/:tag',
+  middleware.validateRequest({ params: ParamsWithTag }),
+  findByTag
+);
 router.post('/', middleware.validateRequest({ body: TCard }), createOne);
 router.put(
   '/:id',

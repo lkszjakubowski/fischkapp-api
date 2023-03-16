@@ -12,7 +12,7 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const validateRequest = (validators: RequestValidators) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
     try {
       if (validators.params) {
         req.params = await validators.params.parseAsync(req.params);
