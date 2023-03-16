@@ -7,7 +7,7 @@ export const ParamsWithId = z.object({
     .min(1)
     .refine((val) => {
       return ObjectId.isValid(val);
-    }),
+    }, 'Invalid ID'),
 });
 
 export type ParamsWithId = z.infer<typeof ParamsWithId>;

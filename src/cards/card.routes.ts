@@ -3,6 +3,7 @@ import middleware from '../middleware';
 import { TCard, UpdateCardPayload } from './card.interfaces';
 import {
   createOne,
+  deleteOne,
   findAll,
   findByAuthor,
   findByTag,
@@ -30,6 +31,11 @@ router.put(
   '/:id',
   middleware.validateRequest({ params: ParamsWithId, body: UpdateCardPayload }),
   updateOne
+);
+router.delete(
+  '/:id',
+  middleware.validateRequest({ params: ParamsWithId }),
+  deleteOne
 );
 
 export default router;

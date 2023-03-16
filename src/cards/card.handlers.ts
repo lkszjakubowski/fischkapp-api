@@ -62,7 +62,24 @@ export const updateOne = async (
     if (!result) {
       res.status(404).end();
     } else {
-      res.status(201).json(result);
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteOne = async (
+  req: Request<ParamsWithId, {}, {}>,
+  res: Response<{}>,
+  next: NextFunction
+) => {
+  try {
+    const result = await Card.findByIdAndRemove(req.params.id);
+    if (!result) {
+      res.status(404).end();
+    } else {
+      res.status(202);
     }
   } catch (error) {
     next(error);
