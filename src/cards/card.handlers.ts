@@ -5,6 +5,7 @@ import { TCard, UpdateCardPayload, CardWithId } from './card.interfaces';
 import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
 import { ParamsWithTag } from '../interfaces/ParamsWithTag';
 import { ObjectId } from 'mongoose';
+import { lessThanFiveMinutes } from '../utils/helpers';
 
 export const findAll = async (
   _req: Request,
@@ -80,17 +81,11 @@ export const deleteOne = async (
     if (!card) {
       res.status(404).end();
     } else {
-      if (card.createdAt) {
-        const date = new Date();
-        const fiveMinutes = 50 * 60 * 1000;
-        const diffTime = date.getTime() - card.createdAt.getTime();
-        if (diffTime < fiveMinutes) {
-          await Card.findByIdAndDelete(req.params.id);
-          res.status(204);
-        } else {
-          res.status(403).end();
-        }
+      if (lessThanFiveMinutes(card)) {
+        await Card.findByIdAndDelete(req.params.id);
+        res.status(204).end();
       }
+      res.status(403).end();
     }
   } catch (error) {
     next(error);
