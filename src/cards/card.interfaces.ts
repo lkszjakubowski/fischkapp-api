@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { date, z } from 'zod';
 import { WithId } from 'mongodb';
 
 export const TCard = z
@@ -7,6 +7,7 @@ export const TCard = z
     back: z.string().trim().min(1),
     tags: z.array(z.string().trim().min(1)),
     author: z.string().trim().min(2),
+    createdAt: z.date().optional(),
   })
   .strict();
 
