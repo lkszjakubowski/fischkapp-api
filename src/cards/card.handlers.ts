@@ -5,7 +5,7 @@ import { TCard, UpdateCardPayload, CardWithId } from './card.interfaces';
 import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
 import { ParamsWithTag } from '../interfaces/ParamsWithTag';
 import { ObjectId } from 'mongoose';
-import { lessThanFiveMinutes } from '../utils/helpers';
+import { lessThanFiveMinutes } from './card.validators';
 
 export const findAll = async (
   _req: Request,
