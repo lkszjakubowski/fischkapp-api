@@ -5,6 +5,7 @@ import logger from './utils/logger';
 import middleware from './middleware';
 import cors from 'cors';
 import { corsOptions } from './utils/cors';
+import { verifyHeader } from './utils/auth';
 
 import router from './cards/card.routes';
 
@@ -23,6 +24,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use(middleware.requestLogger);
+app.use(verifyHeader);
 
 app.use('/cards', router);
 
