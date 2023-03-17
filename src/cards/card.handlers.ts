@@ -4,6 +4,8 @@ import { Card } from './card.model';
 import { TCard, UpdateCardPayload, CardWithId } from './card.interfaces';
 import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
 import { ParamsWithTag } from '../interfaces/ParamsWithTag';
+import { ObjectId } from 'mongoose';
+import { lessThanFiveMinutes } from './card.validators';
 
 export const findAll = async (
   _req: Request,
@@ -62,7 +64,28 @@ export const updateOne = async (
     if (!result) {
       res.status(404).end();
     } else {
-      res.status(201).json(result);
+      res.status(200).json(result);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteOne = async (
+  req: Request<ParamsWithId, {}, {}>,
+  res: Response<{}>,
+  next: NextFunction
+) => {
+  try {
+    const card = await Card.findById(req.params.id);
+    if (!card) {
+      res.status(404).end();
+    } else {
+      if (lessThanFiveMinutes(card)) {
+        await Card.findByIdAndDelete(req.params.id);
+        res.status(204).end();
+      }
+      res.status(403).end();
     }
   } catch (error) {
     next(error);
