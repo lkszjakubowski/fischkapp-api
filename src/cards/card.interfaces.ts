@@ -1,4 +1,4 @@
-import { date, z } from 'zod';
+import { z } from 'zod';
 import { WithId } from 'mongodb';
 
 export const TCard = z

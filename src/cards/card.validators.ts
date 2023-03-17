@@ -5,7 +5,7 @@ export const lessThanFiveMinutes = (card: TCard): boolean => {
   const fiveMinutes = 50 * 60 * 1000;
   if (card.createdAt) {
     const diffTime = date.getTime() - card.createdAt.getTime();
-    if (diffTime < fiveMinutes) return true;
+    return diffTime < fiveMinutes;
   }
   return false;
 };
