@@ -13,7 +13,7 @@ export const findAll = async (
   _next: NextFunction
 ) => {
   const result = await Card.find().sort({ createdAt: -1 });
-  res.status(201).json(result);
+  res.status(200).json(result);
 };
 
 export const findByAuthor = async (
