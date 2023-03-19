@@ -3,7 +3,7 @@ import logger from './utils/logger';
 import RequestValidators from './interfaces/RequestValidators';
 import { ZodError } from 'zod';
 
-const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+const requestLogger = (req: Request, _res: Response, next: NextFunction) => {
   logger.info('Method: ', req.method);
   logger.info('Path: ', req.path);
   logger.info('Body: ', req.body);
