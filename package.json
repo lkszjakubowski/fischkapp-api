@@ -7,7 +7,7 @@
   "author": "Nerdbord",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "npm install tsc && tsc",
     "start": "node dist/index.js",
     "dev": "NODE_ENV=development nodemon src/index.ts"
   },
