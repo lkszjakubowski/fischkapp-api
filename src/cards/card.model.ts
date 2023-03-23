@@ -1,7 +1,19 @@
-import { TCard } from './card.interfaces';
-import { Schema, model } from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 
-const cardSchema = new Schema<TCard>(
+export interface UserInput {
+  front: String;
+  back: String;
+  tags: Array<string>;
+  author: String;
+}
+
+export interface CardDocument extends UserInput {
+  _id: ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const cardSchema = new mongoose.Schema(
   {
     front: {
       type: String,
@@ -29,9 +41,11 @@ const cardSchema = new Schema<TCard>(
 );
 
 cardSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
+  transform: (_document, returnedObject) => {
     delete returnedObject.__v;
   },
 });
 
-export const Card = model<TCard>('Card', cardSchema);
+const CardModel = mongoose.model<CardDocument>('Card', cardSchema);
+
+export default CardModel;

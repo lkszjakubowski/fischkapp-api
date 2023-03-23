@@ -1,41 +1,33 @@
 import { Router } from 'express';
-import middleware from '../middleware';
-import { TCard, UpdateCardPayload } from './card.interfaces';
+import { validateRequest } from '../middleware';
 import {
-  createOne,
-  deleteOne,
-  findAll,
-  findByAuthor,
-  findByTag,
-  updateOne,
+  createCardHandler,
+  findCardsHandler,
+  findCardsByAuthorHandler,
+  findCardByIdHandler,
+  findCardsByTagHandler,
+  updateCardHandler,
+  deleteCardHandler,
 } from './card.handlers';
-import { ParamsWithId } from '../interfaces/ParamsWithId';
-import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
-import { ParamsWithTag } from '../interfaces/ParamsWithTag';
+import {
+  createCardSchema,
+  deleteCardSchema,
+  getCardSchema,
+  updateCardSchema,
+} from './card.interfaces';
 
 const router = Router();
 
-router.get('/', findAll);
+router.get('/', findCardsHandler);
 router.get(
   '/author/:author',
-  middleware.validateRequest({ params: ParamsWithAuthor }),
-  findByAuthor
+  validateRequest(getCardSchema),
+  findCardsByAuthorHandler
 );
-router.get(
-  '/tags/:tag',
-  middleware.validateRequest({ params: ParamsWithTag }),
-  findByTag
-);
-router.post('/', middleware.validateRequest({ body: TCard }), createOne);
-router.put(
-  '/:id',
-  middleware.validateRequest({ params: ParamsWithId, body: UpdateCardPayload }),
-  updateOne
-);
-router.delete(
-  '/:id',
-  middleware.validateRequest({ params: ParamsWithId }),
-  deleteOne
-);
+router.get('/tags/:tag', validateRequest(getCardSchema), findCardsByTagHandler);
+router.get('/:id', validateRequest(getCardSchema), findCardByIdHandler);
+router.post('/', validateRequest(createCardSchema), createCardHandler);
+router.put('/:id', validateRequest(updateCardSchema), updateCardHandler);
+router.delete('/:id', validateRequest(deleteCardSchema), deleteCardHandler);
 
 export default router;

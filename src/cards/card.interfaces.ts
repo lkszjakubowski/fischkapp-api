@@ -1,26 +1,49 @@
 import { z } from 'zod';
-import { WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
-export const TCard = z
-  .object({
-    front: z.string().trim().min(1),
-    back: z.string().trim().min(1),
-    tags: z.array(z.string().trim().min(1)),
-    author: z.string().trim().min(2),
-    createdAt: z.date().optional(),
-  })
-  .strict();
+const payload = {
+  body: z
+    .object({
+      front: z.string().trim().min(1),
+      back: z.string().trim().min(1),
+      tags: z.array(z.string().trim().min(1)),
+      author: z.string().trim().min(2),
+    })
+    .strict(),
+};
 
-export type TCard = z.infer<typeof TCard>;
+const params = {
+  params: z.object({
+    id: z
+      .string()
+      .min(1)
+      .refine((val) => {
+        return ObjectId.isValid(val);
+      }, 'Invalid ID')
+      .optional(),
+    author: z.string().trim().min(2).optional(),
+    tag: z.string().trim().min(2).optional(),
+  }),
+};
 
-export const UpdateCardPayload = z
-  .object({
-    front: z.string().trim().min(1),
-    back: z.string().trim().min(1),
-    tags: z.array(z.string().trim().min(1)),
-  })
-  .strict();
+export const createCardSchema = z.object({
+  ...payload,
+});
 
-export type UpdateCardPayload = z.infer<typeof UpdateCardPayload>;
+export const updateCardSchema = z.object({
+  ...payload,
+  ...params,
+});
 
-export type CardWithId = WithId<TCard>;
+export const deleteCardSchema = z.object({
+  ...params,
+});
+
+export const getCardSchema = z.object({
+  ...params,
+});
+
+export type CreateCardInput = z.infer<typeof createCardSchema>;
+export type UpdateCardInput = z.infer<typeof updateCardSchema>;
+export type ReadCardInput = z.infer<typeof getCardSchema>;
+export type DeleteCardInput = z.infer<typeof deleteCardSchema>;

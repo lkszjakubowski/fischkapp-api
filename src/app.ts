@@ -11,14 +11,16 @@ import router from './cards/card.routes';
 
 const app = express();
 
-mongoose
-  .connect(`${config.MONGODB_URI}`)
-  .then(() => {
-    logger.info('Connected to MongoDB');
-  })
-  .catch((error: Error) => {
-    logger.error('Could not connect to MongoDB', error);
-  });
+if (config.NODE_ENV !== 'test') {
+  mongoose
+    .connect(`${config.MONGODB_URI}`)
+    .then(() => {
+      logger.info('Connected to MongoDB');
+    })
+    .catch((error: Error) => {
+      logger.error('Could not connect to MongoDB', error);
+    });
+}
 
 app.use(cors(corsOptions));
 app.use(express.json());

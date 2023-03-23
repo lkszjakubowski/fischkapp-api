@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import logger from './utils/logger';
-import RequestValidators from './interfaces/RequestValidators';
-import { ZodError } from 'zod';
+import { AnyZodObject, ZodError } from 'zod';
 
 const requestLogger = (req: Request, _res: Response, next: NextFunction) => {
   logger.info('Method: ', req.method);
@@ -11,17 +10,15 @@ const requestLogger = (req: Request, _res: Response, next: NextFunction) => {
   next();
 };
 
-const validateRequest = (validators: RequestValidators) => {
+export const validateRequest = (schema: AnyZodObject) => {
   return async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      if (validators.params) {
-        req.params = await validators.params.parseAsync(req.params);
-      }
-      if (validators.body) {
-        req.body = await validators.body.parseAsync(req.body);
-      }
+      await schema.parseAsync({
+        body: req.body,
+        params: req.params,
+      });
       next();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -38,18 +35,15 @@ const errorHandler: ErrorRequestHandler = (
   next: NextFunction
 ) => {
   if (error instanceof ZodError) {
-    res.status(403);
-    res.json({ error });
+    res.status(403).json({ error });
   }
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-  res.status(statusCode);
-  res.json({ error: error.message });
+  res.status(statusCode).json({ error: error.message });
   next(error);
 };
 
 export default {
   requestLogger,
   unknownEndpoint,
-  validateRequest,
   errorHandler,
 };
