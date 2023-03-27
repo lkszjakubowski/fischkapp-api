@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import app from '../app';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import {
   supertestConfig,
@@ -10,7 +10,6 @@ import {
 } from './card.test.helpers';
 import CardModel from './card.model';
 import { createCard, findCards } from './card.services';
-
 const api = supertest(app);
 
 describe('card', () => {
@@ -28,6 +27,41 @@ describe('card', () => {
   beforeEach(async () => {
     await CardModel.deleteMany({});
     await CardModel.insertMany(initialCards);
+  });
+
+  describe('DELETE /cards/:id route', () => {
+    describe('given that card was deleted correctly', () => {
+      it('should return with a 204 status code and delete the requested flashcard if created less than 5 minutes ago', async () => {
+        const flashcards = await findCards({});
+        const flashcardToDelete = flashcards[0];
+
+        await api
+          .delete(`/cards/${flashcardToDelete?._id}`)
+          .set(supertestConfig)
+          .expect(204);
+
+        const flashcardsAtEnd = await findCards({});
+
+        expect(flashcardsAtEnd).toHaveLength(flashcards.length - 1);
+
+        const fronts = flashcardsAtEnd.map((flashcard) => flashcard.front);
+
+        expect(fronts).not.toContain(flashcardToDelete?.front);
+      });
+    });
+
+    describe('given that requested flashcard does not exist', () => {
+      it('should return with a 404 status code', async () => {
+        const flashcards = await findCards({});
+
+        const id = new Types.ObjectId();
+        const flashcardsIds = flashcards.map((flashcard) => flashcard._id);
+
+        expect(flashcardsIds).not.toContain(id);
+
+        await api.delete(`/cards/${id}`).set(supertestConfig).expect(404);
+      });
+    });
   });
 
   describe('PUT /cards/:id route', () => {

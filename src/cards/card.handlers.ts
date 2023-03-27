@@ -107,7 +107,7 @@ export async function deleteCardHandler(
 
   if (lessThanFiveMinutes(card)) {
     await deleteCard({ _id: id });
-    return res.status(200).end();
+    return res.status(204).end();
   }
 
   return res.status(403).end();
