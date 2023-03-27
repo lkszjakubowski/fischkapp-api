@@ -16,6 +16,7 @@ export const validateRequest = (schema: AnyZodObject) => {
       await schema.parseAsync({
         body: req.body,
         params: req.params,
+        test: 'test',
       });
       next();
     } catch (error: any) {

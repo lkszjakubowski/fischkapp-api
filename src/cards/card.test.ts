@@ -8,8 +8,8 @@ import {
   card,
   isSorted,
 } from './card.test.helpers';
-import CardModel from '../cards/card.model';
-import { createCard } from '../cards/card.services';
+import CardModel from './card.model';
+import { createCard } from './card.services';
 
 const api = supertest(app);
 
