@@ -30,6 +30,28 @@ describe('card', () => {
     await CardModel.insertMany(initialCards);
   });
 
+  describe('POST /cards/ route', () => {
+    describe('given the request is authorized and data is correct', () => {
+      it('should return with a 200 status code and newly created flashcard', async () => {
+        const response = await api
+          .post('/cards/')
+          .send(card)
+          .set(supertestConfig);
+
+        expect(response.statusCode).toBe(201);
+        expect(response.body.author).toEqual(response.body.author);
+      });
+
+      it('should return with a 400 status code if flashcard with a specific front value already exixts', async () => {
+        await api
+          .post('/cards/')
+          .send(initialCards[0])
+          .set(supertestConfig)
+          .expect(400);
+      });
+    });
+  });
+
   describe('GET /cards/ route', () => {
     describe('given the request is authorized', () => {
       it('should return with a 200 status code', async () => {

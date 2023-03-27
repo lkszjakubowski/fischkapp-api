@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import logger from './utils/logger';
 import { AnyZodObject, ZodError } from 'zod';
+import { MongoServerError } from 'mongodb';
 
 const requestLogger = (req: Request, _res: Response, next: NextFunction) => {
   logger.info('Method: ', req.method);
@@ -16,7 +17,6 @@ export const validateRequest = (schema: AnyZodObject) => {
       await schema.parseAsync({
         body: req.body,
         params: req.params,
-        test: 'test',
       });
       next();
     } catch (error: any) {
@@ -38,6 +38,16 @@ const errorHandler: ErrorRequestHandler = (
   if (error instanceof ZodError) {
     res.status(403).json({ error });
   }
+
+  if (error instanceof MongoServerError && error.code === 11000) {
+    res
+      .status(400)
+      .json({
+        success: 'false',
+        message: 'Flashcard with a given front value already exists!',
+      });
+  }
+
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   res.status(statusCode).json({ error: error.message });
   next(error);
