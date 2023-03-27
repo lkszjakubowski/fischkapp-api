@@ -1,92 +1,114 @@
 import { NextFunction, Request, Response } from 'express';
-import { ParamsWithId } from '../interfaces/ParamsWithId';
-import { Card } from './card.model';
-import { TCard, UpdateCardPayload, CardWithId } from './card.interfaces';
-import { ParamsWithAuthor } from '../interfaces/ParamsWithAuthor';
-import { ParamsWithTag } from '../interfaces/ParamsWithTag';
+import {
+  CreateCardInput,
+  ReadCardInput,
+  UpdateCardInput,
+} from './card.interfaces';
+import { CardDocument } from './card.model';
+import {
+  createCard,
+  findCards,
+  findCard,
+  updateCard,
+  deleteCard,
+} from './card.services';
 import { lessThanFiveMinutes } from './card.validators';
 
-export const findAll = async (
-  _req: Request,
-  res: Response<CardWithId[]>,
-  _next: NextFunction
-) => {
-  const result = await Card.find().sort({ createdAt: -1 });
-  res.status(200).json(result);
-};
-
-export const findByAuthor = async (
-  req: Request<ParamsWithAuthor, CardWithId[], {}>,
-  res: Response<CardWithId[]>,
-  _next: NextFunction
-) => {
-  const result = await Card.find({ author: req.params.author }).sort({
-    createdAt: -1,
-  });
-  res.status(201).json(result);
-};
-
-export const findByTag = async (
-  req: Request<ParamsWithTag, CardWithId[], {}>,
-  res: Response<CardWithId[]>,
-  _next: NextFunction
-) => {
-  const result = await Card.find({ tags: req.params.tag }).sort({
-    createdAt: -1,
-  });
-  res.status(201).json(result);
-};
-
-export const createOne = async (
-  req: Request<{}, CardWithId, TCard>,
-  res: Response<CardWithId>,
+export async function createCardHandler(
+  req: Request<{}, {}, CreateCardInput['body']>,
+  res: Response,
   next: NextFunction
-) => {
+) {
   try {
-    const savedCard = await Card.create(req.body);
-    res.status(201).json(savedCard);
+    const card = await createCard({ ...req.body });
+    res.status(201).json(card);
   } catch (error) {
     next(error);
   }
-};
+}
 
-export const updateOne = async (
-  req: Request<ParamsWithId, CardWithId, UpdateCardPayload>,
-  res: Response<CardWithId>,
+export async function findCardsHandler(
+  _req: Request,
+  res: Response<CardDocument[]>
+) {
+  const cards = await findCards({});
+  res.status(200).json(cards);
+}
+
+export async function findCardByIdHandler(
+  req: Request<ReadCardInput['params']>,
+  res: Response<CardDocument>
+) {
+  const id = req.params.id;
+  const card = await findCard({ _id: id });
+
+  if (!card) {
+    return res.status(404).end();
+  }
+  return res.status(200).json(card);
+}
+
+export async function findCardsByAuthorHandler(
+  req: Request<ReadCardInput['params']>,
+  res: Response<CardDocument[]>
+) {
+  const author = req.params.author;
+  const cards = await findCards({ author });
+
+  return res.status(200).json(cards);
+}
+
+export async function findCardsByTagHandler(
+  req: Request<ReadCardInput['params']>,
+  res: Response<CardDocument[]>
+) {
+  const tag = req.params.tag;
+  const cards = await findCards({ tags: tag });
+
+  return res.status(200).json(cards);
+}
+
+export async function updateCardHandler(
+  req: Request<UpdateCardInput['params']>,
+  res: Response,
   next: NextFunction
-) => {
+) {
+  const id = req.params.id;
+  const body = req.body;
+
+  const card = await findCard({ _id: id });
+
+  if (!card) {
+    return res.status(404).end();
+  }
+
   try {
-    const result = await Card.findByIdAndUpdate(req.params.id, req.body, {
+    const updatedCard = await updateCard({ _id: id }, body, {
       new: true,
     });
 
-    if (!result) {
-      res.status(404).end();
-    } else {
-      res.status(200).json(result);
-    }
+    return res.status(200).json(updatedCard);
   } catch (error) {
-    next(error);
+    return next(error);
   }
-};
+}
 
-export const deleteOne = async (
-  req: Request<ParamsWithId, {}, {}>,
-  res: Response<{}>,
-  next: NextFunction
-) => {
-  try {
-    const card = await Card.findById(req.params.id);
-    if (!card) {
-      res.status(404).end();
-    } else {
-      if (lessThanFiveMinutes(card)) {
-        await Card.findByIdAndDelete(req.params.id);
-        res.status(204).end();
-      }
-      res.status(403).end();
-    }
-  } catch (error) {
-    next(error);
+export async function deleteCardHandler(
+  req: Request<UpdateCardInput['params']>,
+  res: Response
+) {
+  const id = req.params.id;
+
+  const card = await findCard({ _id: id });
+
+  if (!card) {
+    return res.status(404).end();
   }
-};
+
+  if (lessThanFiveMinutes(card)) {
+    await deleteCard({ _id: id });
+    return res.status(200).end();
+  }
+
+  return res.status(403).end();
+}

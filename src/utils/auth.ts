@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import config from './config';
 
 export const verifyHeader = (
   req: Request,
@@ -8,7 +9,7 @@ export const verifyHeader = (
   if (
     req.headers &&
     req.headers.authorization &&
-    req.headers.authorization === 'pss-this-is-my-secret'
+    req.headers.authorization === config.HTTP_AUTHORIZATION
   ) {
     return next();
   } else {
