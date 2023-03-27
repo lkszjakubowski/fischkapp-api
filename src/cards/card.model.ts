@@ -1,9 +1,12 @@
 import mongoose, { ObjectId } from 'mongoose';
 
-export interface UserInput {
+export interface UserUpdateInput {
   front: String;
   back: String;
   tags: Array<string>;
+}
+
+export interface UserInput extends UserUpdateInput {
   author: String;
 }
 
