@@ -42,7 +42,7 @@ const errorHandler: ErrorRequestHandler = (
   if (error instanceof MongoServerError && error.code === 11000) {
     res.status(400).json({
       success: 'false',
-      message: 'Flashcard with a given front value already exists!',
+      message: 'Unique index error',
     });
   }
 
