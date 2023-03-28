@@ -9,7 +9,7 @@ import {
   isSorted,
 } from './card.test.helpers';
 import CardModel from './card.model';
-import { createCard } from './card.services';
+import { createCard, findCards } from './card.services';
 
 const api = supertest(app);
 
@@ -28,6 +28,28 @@ describe('card', () => {
   beforeEach(async () => {
     await CardModel.deleteMany({});
     await CardModel.insertMany(initialCards);
+  });
+
+  describe('PUT /cards/:id route', () => {
+    describe('given the request is authorized and data is correct', () => {
+      it('should return with a 200 status code and newly updated flashcard', async () => {
+        const flashcards = await findCards({});
+        const flashcardToUpdate = flashcards[0];
+
+        const response = await api
+          .put(`/cards/${flashcardToUpdate?._id}`)
+          .send(card)
+          .set(supertestConfig);
+
+        const { _id, createdAt, updatedAt, ...flashcardStripped } =
+          response.body;
+
+        expect(response.statusCode).toBe(200);
+        expect(JSON.stringify(card) === JSON.stringify(flashcardStripped)).toBe(
+          true
+        );
+      });
+    });
   });
 
   describe('POST /cards/ route', () => {

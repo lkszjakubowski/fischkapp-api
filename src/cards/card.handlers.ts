@@ -3,7 +3,7 @@ import {
   CreateCardInput,
   ReadCardInput,
   UpdateCardInput,
-} from './card.interfaces';
+} from './card.schemas';
 import { CardDocument } from './card.model';
 import {
   createCard,

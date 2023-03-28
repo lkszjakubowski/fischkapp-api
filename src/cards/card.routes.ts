@@ -14,7 +14,7 @@ import {
   deleteCardSchema,
   getCardSchema,
   updateCardSchema,
-} from './card.interfaces';
+} from './card.schemas';
 
 const router = Router();
 
