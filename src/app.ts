@@ -7,6 +7,9 @@ import cors from 'cors';
 import { corsOptions } from './utils/cors';
 import { verifyHeader } from './utils/auth';
 
+import swaggerUi from 'swagger-ui-express';
+import specs from './utils/swagger';
+
 import router from './cards/card.routes';
 
 const app = express();
@@ -21,6 +24,8 @@ if (config.NODE_ENV !== 'test') {
       logger.error('Could not connect to MongoDB', error);
     });
 }
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(cors(corsOptions));
 app.use(express.json());
