@@ -62,6 +62,26 @@ describe('card', () => {
         await api.delete(`/cards/${id}`).set(supertestConfig).expect(404);
       });
     });
+
+    describe('given that flashcard was created more than 5 minutes ago', () => {
+      it('should return with a 403 status code', async () => {
+        const newFlashcard = await createCard(card);
+        const flashcardToDelete = await CardModel.findOneAndUpdate(
+          { _id: newFlashcard._id },
+          { createdAt: new Date(0) },
+          {
+            new: true,
+            timestamps: false,
+            strict: false,
+          }
+        );
+
+        await api
+          .delete(`/cards/${flashcardToDelete?._id}`)
+          .set(supertestConfig)
+          .expect(403);
+      });
+    });
   });
 
   describe('PUT /cards/:id route', () => {
@@ -79,9 +99,7 @@ describe('card', () => {
           response.body;
 
         expect(response.statusCode).toBe(200);
-        expect(JSON.stringify(card) === JSON.stringify(flashcardStripped)).toBe(
-          true
-        );
+        expect(card).toEqual(flashcardStripped);
       });
     });
   });
