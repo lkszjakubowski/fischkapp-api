@@ -9,4 +9,5 @@ const error = (...params: (string | Error)[]) => {
     console.error(...params);
   }
 };
+
 export default { info, error };
