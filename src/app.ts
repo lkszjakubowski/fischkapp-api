@@ -4,13 +4,10 @@ import config from './utils/config';
 import logger from './utils/logger';
 import middleware from './middleware';
 import cors from 'cors';
-import { corsOptions } from './utils/cors';
 import { verifyHeader } from './utils/auth';
-
-import swaggerUi from 'swagger-ui-express';
-import specs from './utils/swagger';
-
 import router from './cards/card.routes';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './utils/swagger';
 
 const app = express();
 
@@ -25,9 +22,9 @@ if (config.NODE_ENV !== 'test') {
     });
 }
 
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 app.use(middleware.requestLogger);

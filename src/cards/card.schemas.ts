@@ -1,6 +1,87 @@
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 
+/**
+ * @openapi
+ *
+ * components:
+ *  examples:
+ *    flashcardExample:
+ *      value:
+ *        _id: 643d1430dafadc165b96049c
+ *        front: No
+ *        back: Nein
+ *        tags: [French, German]
+ *        author: John
+ *        createdAt: 2023-01-19T10:51:22Z
+ *        updatedAt: 2023-01-20T04:30:35Z
+ *      summary: A sample flashcard
+ *    flashcardInputExample:
+ *      value:
+ *        front: No
+ *        back: Nein
+ *        tags: [French, German]
+ *        author: John
+ *      summary: A sample flashcard input
+ *    flashcardArray:
+ *      value:
+ *        - _id: 643d1430dafadc165b96049c
+ *          front: No
+ *          back: Nein
+ *          tags: [French, German]
+ *          author: John
+ *          createdAt: 2023-01-19T10:51:22Z
+ *          updatedAt: 2023-01-20T04:30:35Z
+ *        - _id: 94dc013f9ac7cfbbba14b0c1
+ *          front: Si
+ *          back: Ja
+ *          tags: [Spanish, German]
+ *          author: Jane
+ *          createdAt: 2023-02-10T15:20:45Z
+ *          updatedAt: 2023-02-11T08:15:11Z
+ *      summary: An array of flashcards
+ *  schemas:
+ *    ArrayOfFlashcards:
+ *      type: array
+ *      items:
+ *        type: object
+ *        properties:
+ *          _id:
+ *            type: string
+ *          front:
+ *            type: string
+ *          back:
+ *            type: string
+ *          tags:
+ *            type: array
+ *            items:
+ *              type: string
+ *          author:
+ *            type: string
+ *          createdAt:
+ *            type: string
+ *          updatedAt:
+ *            type: string
+ *    FlashcardInput:
+ *      type: object
+ *      properties:
+ *        front:
+ *          type: string
+ *        back:
+ *          type: string
+ *        tags:
+ *          type: array
+ *          items:
+ *            type: string
+ *        author:
+ *          type: string
+ *      required:
+ *        - front
+ *        - back
+ *        - tags
+ *        - author
+ */
+
 const payload = {
   body: z
     .object({
